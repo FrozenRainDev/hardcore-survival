@@ -133,7 +133,7 @@
   "hcs.tip.hurt_hand_attack": "Attacking with bare hand can lead to injuries!",
   "hcs.tip.insanity_insomnia": "You cannot fall asleep as your mind is overwhelmed by eerie and spooky phantasms!",
   "hcs.tip.can_gen_village": "Generating villages is enabled in the current world",
-  "hcs.tip.cant_gen_village": "Generating villages is disabled the current world",
+  "hcs.tip.cant_gen_village": "Generating villages is disabled in the current world",
   "hcs.tip.change_difficulty": "Change difficulty",
   "hcs.tip.too_early_to_sleep": "It is too early to sleep now",
   "hcs.tip.update": "New version detected: %1$s",

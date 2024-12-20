@@ -28,7 +28,7 @@ public class ClientPlayConnectionEvent {
         ClientPlayConnectionEvents.JOIN.register(((handler, sender, client) -> {
             if (client.player == null) return;
             //Show welcome message
-            String url = "http://hcs.coolpage.biz";
+            String url = "https://hcs.coolpage.biz";
             if (Locale.getDefault() != null) {
                 String lang = Locale.getDefault().getLanguage();
                 if (lang != null && !(lang.contains("zh") || lang.contains("hk") || lang.contains("tw"))) url += "/en";
