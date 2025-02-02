@@ -31,7 +31,13 @@ public enum HcsArmorMaterials implements StringIdentifiable, ArmorMaterial {
         map.put(ArmorItem.Type.CHESTPLATE, 1);
         map.put(ArmorItem.Type.LEGGINGS, 1);
         map.put(ArmorItem.Type.BOOTS, 1);
-    }), 9, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.PLANKS));
+    }), 9, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.PLANKS)),
+    NONE("hcs_none", 2, Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+        map.put(ArmorItem.Type.HELMET, 0);
+        map.put(ArmorItem.Type.CHESTPLATE, 0);
+        map.put(ArmorItem.Type.LEGGINGS, 0);
+        map.put(ArmorItem.Type.BOOTS, 0);
+    }), 0, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0.0F, 0.0F, Ingredient.fromTag(ItemTags.FLOWERS));
 
     private final String name;
     private final int durabilityMultiplier;

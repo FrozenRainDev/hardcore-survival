@@ -114,6 +114,9 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
     @Shadow
     public abstract void setFireTicks(int fireTicks);
 
+    @Shadow
+    public abstract Iterable<ItemStack> getArmorItems();
+
     @Unique
     protected ThirstManager thirstManager = new ThirstManager();
     @Unique
@@ -516,8 +519,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements StatAcce
         // Gain sanity when being exposed in the sun with flower in hand
         BlockPos headPos = this.getBlockPos().up();
         int skyBrightness = this.getWorld().getLightLevel(LightType.SKY, headPos);
-        if ((this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)) && this.getWorld().isDay() && skyBrightness >= 14)
-            this.sanityManager.add(0.000009);
+        if (this.getWorld().isDay() && skyBrightness >= 14) {
+            if ((this.getMainHandStack().isIn(ItemTags.FLOWERS) || this.getOffHandStack().isIn(ItemTags.FLOWERS)))
+                this.sanityManager.add(0.000009);
+            else for (var item : this.getArmorItems()) {
+                if (item.getItem() == Reg.GARLAND) {
+                    this.sanityManager.add(0.000012);
+                    break;
+                }
+            }
+        }
         // Lose sanity
         if (this.hasStatusEffect(StatusEffects.WITHER)) this.sanityManager.add(-0.00008);
         else if (this.hasStatusEffect(StatusEffects.POISON)) this.sanityManager.add(-0.00003);

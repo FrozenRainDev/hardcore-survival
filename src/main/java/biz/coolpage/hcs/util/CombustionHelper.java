@@ -129,6 +129,7 @@ public class CombustionHelper {
 
     private static boolean addFuel(World world, BlockPos pos, @NotNull BlockState state, ICampfireBlockEntity campfire, @NotNull ItemStack fuel, int fuelDur) {
         if (state.isOf(Reg.SMOLDERING_CAMPFIRE_BLOCK)) {
+            fuelDur = (int) (fuelDur * 1.5); // Burning Duration↑
             world.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState().with(CampfireBlock.FACING, state.get(CampfireBlock.FACING)).with(CampfireBlock.WATERLOGGED, state.get(CampfireBlock.WATERLOGGED)));
             if (world.getBlockEntity(pos) instanceof ICampfireBlockEntity camp)
                 if (camp.setBurnOutTime(world.getTime() + fuelDur)) {

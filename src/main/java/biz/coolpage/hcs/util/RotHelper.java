@@ -194,7 +194,7 @@ public class RotHelper {
         WorldHelper.trySetServerWorld(world);
         if (WorldHelper.cannotGetServerWorld()) return;
         if (!(world instanceof ServerWorld)) return;
-        world = WorldHelper.getServerWorld();
+//        world = WorldHelper.getServerWorld();
         for (int i = 0; i < inv.size(); ++i) {
             ItemStack stack = inv.getStack(i);
             if (stack == null) continue;

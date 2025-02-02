@@ -22,7 +22,8 @@ public class DiseaseManager {
     public static double getParasitePossibilityAndCheckFoodPoisoning(Item item, LivingEntity entity) {
         double poss = -1.0;
         if (hasNull(item, entity)) return poss;
-        if (item == Reg.WORM) poss = 0.08;
+        // WARNING: Food with parasite == Food causing poisoning
+        // Modify it if new rules needed
         else if (IS_RAW_MEAT.test(item)) {
             if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.16;
             else poss = 0.08;

@@ -27,10 +27,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
@@ -94,7 +91,7 @@ public class Reg implements ModInitializer {
     public static final Item FIRE_PLOUGH = new FireBowItem(new Item.Settings().maxCount(1).maxDamage(64), 3);
     public static final Item TINDER = new Item(new Item.Settings());
     public static final Item WORM = new EffectiveFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1.0f).statusEffect(new StatusEffectInstance(StatusEffects.NAUSEA, 200), 1).build()), 0.0F, -0.08);
-    public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
+    public static final Item PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(0f).build()));
     public static final Item POTHERB = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(1f).build()));
     public static final Item STONE_KNIFE = new KnifeItem(HcsToolMaterials.STONE_WEAPON, 1, 1.6F - 4.0F, new Item.Settings().maxCount(1));
     public static final Item STONE_SPEAR = new SwordItem(HcsToolMaterials.STONE_WEAPON, 2, 1.6F - 4.0F, new Item.Settings().maxCount(1));
@@ -138,7 +135,7 @@ public class Reg implements ModInitializer {
     public static final Item BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).build()));
     public static final Item COOKED_BAMBOO_SHOOT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(1f).build()));
     public static final Item COOKED_CARROT = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(4).saturationModifier(2f).build()));
-    public static final Item COOKED_PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(3).saturationModifier(1f).build()));
+    public static final Item COOKED_PUMPKIN_SLICE = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(2).saturationModifier(0f).build()));
     public static final Item COOKED_SWEET_BERRIES = new Item(new Item.Settings().food(new FoodComponent.Builder().hunger(1).saturationModifier(1f).build()));
     public static final Item BERRY_BUSH = new Item(new Item.Settings());
     public static final Item PETALS_SALAD = new BowlOfFoodItem(new Item.Settings().food(new FoodComponent.Builder().hunger(0).saturationModifier(0f).build()));
@@ -245,7 +242,7 @@ public class Reg implements ModInitializer {
             return performed == null ? super.useOnBlock(context) : performed;
         }
     };
-    public static final BurntTorchBlock BURNT_TORCH_BLOCK = new BurntTorchBlock(Settings.copy(Blocks.TORCH).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
+    public static final BurntTorchBlock BURNT_TORCH_BLOCK = new BurntTorchBlock(Settings.copy(Blocks.TORCH).luminance(state -> 0).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD));
     public static final WallBurntTorchBlock WALL_BURNT_TORCH_BLOCK = new WallBurntTorchBlock(Settings.copy(Blocks.WALL_TORCH).noCollision().breakInstantly().sounds(BlockSoundGroup.WOOD).dropsLike(BURNT_TORCH_BLOCK));
     public static final GlowstoneTorchBlock GLOWSTONE_TORCH_BLOCK = new GlowstoneTorchBlock(Settings.copy(Blocks.TORCH).noCollision().breakInstantly().luminance(state -> 15).sounds(BlockSoundGroup.WOOD));
     public static final WallGlowstoneTorchBlock WALL_GLOWSTONE_TORCH_BLOCK = new WallGlowstoneTorchBlock(Settings.copy(Blocks.WALL_TORCH).noCollision().breakInstantly().luminance(state -> 14).sounds(BlockSoundGroup.WOOD).dropsLike(GLOWSTONE_TORCH_BLOCK));
@@ -255,6 +252,7 @@ public class Reg implements ModInitializer {
     public static final Item SMOLDERING_CAMPFIRE = new HCSCampfireItem(SMOLDERING_CAMPFIRE_BLOCK.getDefaultState());
     public static final Block BURNT_CAMPFIRE_BLOCK = new BurntCampfireBlock();
     public static final Item BURNT_CAMPFIRE = new HCSCampfireItem(BURNT_CAMPFIRE_BLOCK.getDefaultState());
+    public static final Item GARLAND = new ArmorItem(HcsArmorMaterials.NONE, ArmorItem.Type.HELMET, new Item.Settings());
 
     public static final EntityType<RockProjectileEntity> ROCK_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<RockProjectileEntity>create(SpawnGroup.MISC, RockProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
     public static final EntityType<FlintProjectileEntity> FLINT_PROJECTILE_ENTITY = FabricEntityTypeBuilder.<FlintProjectileEntity>create(SpawnGroup.MISC, FlintProjectileEntity::new).dimensions(new EntityDimensions(0.25F, 0.25F, true)).build();
@@ -333,6 +331,7 @@ public class Reg implements ModInitializer {
             entries.add(new ItemStack(WOODEN_CHESTPLATE));
             entries.add(new ItemStack(WOODEN_LEGGINGS));
             entries.add(new ItemStack(WOODEN_BOOTS));
+            entries.add(new ItemStack(GARLAND));
             entries.add(new ItemStack(IMPROVISED_SHIELD));
             entries.add(HOT_WATER_BOTTLE.getDefaultStack());
             entries.add(new ItemStack(WORM));
@@ -505,6 +504,7 @@ public class Reg implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("hcs", "smoldering_campfire"), SMOLDERING_CAMPFIRE);
         Registry.register(Registries.BLOCK, new Identifier("hcs", "burnt_campfire"), BURNT_CAMPFIRE_BLOCK);
         Registry.register(Registries.ITEM, new Identifier("hcs", "burnt_campfire"), BURNT_CAMPFIRE);
+        Registry.register(Registries.ITEM, new Identifier("hcs", "garland"), GARLAND);
 
         Registry.register(Registries.POTION, "hcs_ironskin", IRONSKIN_POTION);
         Registry.register(Registries.POTION, "hcs_long_ironskin", LONG_IRONSKIN_POTION);
@@ -631,4 +631,3 @@ public class Reg implements ModInitializer {
                 })));
     }
 }
-
