@@ -40,6 +40,7 @@ public class StatusManager {
     private float realProtection = 0.0F;
     private float recentFeelingDamage = 0.0F;
     private int returnEffectAwaitTicks = 0; //Server side only
+    private boolean canFoodSpoil = true;
 
     public static int getMaxSoulImpaired(@Nullable LivingEntity entity) {
         return HcsDifficulty.chooseVal(toPlayer(entity), 0, 6, 8);
@@ -342,6 +343,14 @@ public class StatusManager {
 
     public void setReturnEffectAwaitTicks(int returnEffectAwaitTicks) {
         this.returnEffectAwaitTicks = returnEffectAwaitTicks;
+    }
+
+    public boolean canFoodSpoil() {
+        return canFoodSpoil;
+    }
+
+    public void setCanFoodSpoil(boolean canFoodSpoil) {
+        this.canFoodSpoil = canFoodSpoil;
     }
 
 }

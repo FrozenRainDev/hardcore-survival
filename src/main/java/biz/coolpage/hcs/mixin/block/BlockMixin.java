@@ -84,7 +84,7 @@ public class BlockMixin {
     public void onLandedUpon(World world, @NotNull BlockState state, BlockPos pos, Entity entity, float fallDistance, CallbackInfo ci) {
         Block block = state.getBlock();
         float multiplier = 1.0F;
-        if (state.isIn(BlockTags.WOOL)) multiplier = 0.5F;
+        if (state.isIn(BlockTags.WOOL) || state.getBlock() instanceof LeavesBlock) multiplier = 0.5F;
         else if (block instanceof GrassBlock) multiplier = 0.8F;
         else if (block instanceof SandBlock) multiplier = 0.7F;
         else if (block == Blocks.PODZOL || block == Blocks.MYCELIUM || block == Blocks.DIRT_PATH || block == Blocks.DIRT)
@@ -98,7 +98,7 @@ public class BlockMixin {
             if (fallDistance > 3.0F) {
                 float exaggeratedFallDistance = (float) Math.pow(fallDistance, 1.2); //Gain more falling damage than before
                 entity.handleFallDamage(multiplier < 1 ? exaggeratedFallDistance - 2 : exaggeratedFallDistance, multiplier, entity.getDamageSources().fall());
-                if (entity instanceof ServerPlayerEntity player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (player.computeFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.4F) {
+                if (entity instanceof ServerPlayerEntity player && EntityHelper.IS_SURVIVAL_LIKE.test(player) && fallDistance > 9.0F && (player.computeFallDamage(exaggeratedFallDistance, multiplier) / player.getMaxHealth()) > 0.5F) {
                     AtomicBoolean hasFF = new AtomicBoolean(false);
                     player.getArmorItems().forEach(stack -> hasFF.set(hasFF.get() || EnchantmentHelper.getLevel(Enchantments.FEATHER_FALLING, CommUtil.optElse(stack, ItemStack.EMPTY)) > 0));
                     if (!hasFF.get()) { //If player does NOT wear armor with feather falling enchantment, then apply fracture effect

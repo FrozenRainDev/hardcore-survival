@@ -88,7 +88,7 @@ public class UseBlockEvent {
                     player.addStatusEffect(new StatusEffectInstance(HcsEffects.THIRST, 1200, 0, false, false, true));
             } else {
                 double rand = Math.random();
-                if (rand < 0.01) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
+                if (rand < 0.0001) ((StatAccessor) player).getDiseaseManager().addParasite(0.12);
                 else player.addStatusEffect(new StatusEffectInstance(HcsEffects.DIARRHEA, 600, 0, false, false, true));
             }
         }

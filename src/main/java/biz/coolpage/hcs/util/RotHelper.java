@@ -27,18 +27,27 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static biz.coolpage.hcs.config.HcsFoodSpoilage.canFoodSpoil;
+
 public class RotHelper {
     public static final String HFE = "hcs_food_exp"; // food expiry (ticks)
     public static final String HFF = "hcs_food_fresh"; // percentage of food freshness
     public static final String HFI = "hcs_food_exp_icebox"; // food expiry when in icebox
 
+    // See ItemStackMixin, really annoying :(
     public static void combineNBT(@NotNull ItemStack stackA, @NotNull ItemStack stackB) {
+        if (WorldHelper.cannotGetServerWorld()) return;
         int countA = stackA.getCount();
         int countB = stackB.getCount();
         NbtCompound nbtA = stackA.getOrCreateNbt();
         NbtCompound nbtB = stackB.getOrCreateNbt();
-        if (countA + countB <= 0) {
-            Reg.LOGGER.error("RotHelper/combineNBT();countA+countB={}", countA + countB);
+        float freshA = getFresh(WorldHelper.getServerWorld(), stackA);
+        float freshB = getFresh(WorldHelper.getServerWorld(), stackB);
+        if (Float.compare(freshA, freshB) == 0) // Same freshness doesn't need further operations
+            return;
+//        System.out.println("further ops");
+        if (countA <= 0 || countB <= 0) {
+            Reg.LOGGER.error("RotHelper/combineNBT(); {}", countA + ", " + countB);
             return;
         }
         if (WorldHelper.cannotGetServerWorld()) return;
@@ -49,9 +58,17 @@ public class RotHelper {
             createExp(WorldHelper.getServerWorld(), stackB, avgFresh, nbtB.contains(HFI));
     }
 
-    // To improve performance, do not onInteract stack.isOf
+    // To improve performance, do not use "onInteract" "stack.isOf"
     public static boolean canRot(Item item) {
         if (item == null) return false;
+        // Check food spoil enabling config
+        // Just need to add code here; other complex methods are not wise
+        if (WorldHelper.cannotGetServerWorld()) { // Client Side
+            if (WorldHelper.getClientPlayer() != null && !canFoodSpoil(WorldHelper.getClientPlayer()))
+                return false;
+        } else if (!canFoodSpoil(WorldHelper.getServerWorld()))
+            return false; // Server Side
+        // Check special food types
         if (item == Reg.ROT || item == Reg.WORM || item == Items.ROTTEN_FLESH || item == Items.GOLDEN_APPLE || item == Items.ENCHANTED_GOLDEN_APPLE || item == Items.GOLDEN_CARROT || item == Items.GLISTERING_MELON_SLICE || Reg.IS_BARK.test(item))
             return false;
         String name = item.getTranslationKey();
@@ -190,34 +207,34 @@ public class RotHelper {
             Reg.LOGGER.error("RotHelper/tick();world==null||inv==null");
             return;
         }
-        // todo wtf here update w
         WorldHelper.trySetServerWorld(world);
         if (WorldHelper.cannotGetServerWorld()) return;
-        if (!(world instanceof ServerWorld)) return;
+        if (world instanceof ServerWorld) {
 //        world = WorldHelper.getServerWorld();
-        for (int i = 0; i < inv.size(); ++i) {
-            ItemStack stack = inv.getStack(i);
-            if (stack == null) continue;
-            Item item = stack.getItem();
-            NbtCompound nbt = stack.getOrCreateNbt();
-            if (nbt.contains(DryingRackBlockEntity.DRYING_DEADLINE) && !isInIcebox)
-                nbt.remove(DryingRackBlockEntity.DRYING_DEADLINE);
-            if (stack.isEmpty() || !canRot(item)) {
-                if (nbt.contains(HFE)) nbt.remove(HFE);
-                continue;
-            }
-            if (nbt.contains(HFF)) {
-                createExp(world, stack, nbt.getFloat(HFF), isInIcebox);
-                nbt.remove(HFF);
-            }
-            if (nbt.contains(isInIcebox ? HFI : HFE)) {
-                if (getExp(stack, isInIcebox) <= world.getTime() && getPackageType(item) != 1) {
-                    inv.setStack(i, new ItemStack(Reg.ROT, stack.getCount()));
+            for (int i = 0; i < inv.size(); ++i) {
+                ItemStack stack = inv.getStack(i);
+                if (stack == null) continue;
+                Item item = stack.getItem();
+                NbtCompound nbt = stack.getOrCreateNbt();
+                if (nbt.contains(DryingRackBlockEntity.DRYING_DEADLINE) && !isInIcebox)
+                    nbt.remove(DryingRackBlockEntity.DRYING_DEADLINE);
+                if (stack.isEmpty() || !canRot(item)) {
+                    if (nbt.contains(HFE)) nbt.remove(HFE);
+                    continue;
                 }
-            } else createExp(world, stack, isInIcebox);
-            if (nbt.contains(isInIcebox ? HFE : HFI)) {
-                createExp(world, stack, getFresh(world, stack, !isInIcebox), isInIcebox);
-                nbt.remove(isInIcebox ? HFE : HFI);
+                if (nbt.contains(HFF)) {
+                    createExp(world, stack, nbt.getFloat(HFF), isInIcebox);
+                    nbt.remove(HFF);
+                }
+                if (nbt.contains(isInIcebox ? HFI : HFE)) {
+                    if (getExp(stack, isInIcebox) <= world.getTime() && getPackageType(item) != 1) {
+                        inv.setStack(i, new ItemStack(Reg.ROT, stack.getCount()));
+                    }
+                } else createExp(world, stack, isInIcebox);
+                if (nbt.contains(isInIcebox ? HFE : HFI)) {
+                    createExp(world, stack, getFresh(world, stack, !isInIcebox), isInIcebox);
+                    nbt.remove(isInIcebox ? HFE : HFI);
+                }
             }
         }
     }

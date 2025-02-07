@@ -48,6 +48,14 @@ public abstract class ItemStackMixin {
         return String.format("%.2f", protectionAmount);
     }
 
+    /* WTF??? Called consistently for EVERY same stack (perceived as different stacks combination)
+    Fk u, mojang, infernal shit codes
+    Case solved, the method that 1.19 had to be called only when different items were merged,
+    to 1.20 will be called all the time for the same item pile when it doesn't need to be merged,
+    which is equivalent to constantly merging with itself.
+    In other words, it keeps calculating the freshness of the merge with itself, and since it uses floats,
+     there is bound to be an error,
+    and the error accumulates after a lot of calculations, resulting in a continuous and slow decrease of the expiration time NBT. */
     @Inject(at = @At("HEAD"), method = "canCombine", cancellable = true)
     private static void canCombine(@NotNull ItemStack stack, ItemStack otherStack, CallbackInfoReturnable<Boolean> cir) {
         // Combine same kinds of food stacks with different freshness

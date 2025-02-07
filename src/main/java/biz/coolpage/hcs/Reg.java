@@ -6,6 +6,7 @@ import biz.coolpage.hcs.block.IceboxBlock;
 import biz.coolpage.hcs.block.SmolderingCampfireBlock;
 import biz.coolpage.hcs.block.torches.*;
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.entity.*;
 import biz.coolpage.hcs.event.*;
 import biz.coolpage.hcs.item.*;
@@ -271,9 +272,8 @@ public class Reg implements ModInitializer {
     public static final RecipeSerializer<TorchIgniteRecipe> TORCH_IGNITE_RECIPE = new SpecialRecipeSerializer<>(TorchIgniteRecipe::new);
 
     public static final RegistryKey<ItemGroup> HCS_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier("hcs", "main"));
-    // FabricItemGroup.builder(new Identifier("hcs", "main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
-    public static final String HCS_DIFFICULTY_NAME = "hcsDifficulty";
-    public static final GameRules.Key<EnumRule<HcsDifficulty.HcsDifficultyEnum>> HCS_DIFFICULTY = GameRules.register(HCS_DIFFICULTY_NAME, GameRules.Category.PLAYER, GameRuleFactory.createEnumRule(HcsDifficulty.HcsDifficultyEnum.standard, HcsDifficulty.HcsDifficultyEnum.values()));
+    public static final GameRules.Key<EnumRule<HcsDifficulty.HcsDifficultyEnum>> HCS_DIFFICULTY = GameRules.register(HcsDifficulty.HCS_DIFFICULTY_NAME, GameRules.Category.PLAYER, GameRuleFactory.createEnumRule(HcsDifficulty.HcsDifficultyEnum.standard, HcsDifficulty.HcsDifficultyEnum.values()));
+    public static final GameRules.Key<GameRules.BooleanRule> HCS_FOOD_SPOILAGE = GameRules.register(HcsFoodSpoilage.HCS_SPOILAGE_NAME, GameRules.Category.PLAYER, GameRuleFactory.createBooleanRule(true));
     public static final Predicate<Item> IS_BARK = item -> item == BARK || item == WILLOW_BARK;
 
     @Override

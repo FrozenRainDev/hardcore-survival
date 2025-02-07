@@ -21,8 +21,7 @@ public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
 
     // Shared methods for burning crude torch & campfire item, which are used for burning length sync in inventories
     private static boolean isInvalidStack(ItemStack stack) {
-        if (WorldHelper.cannotGetServerWorld()) return false;
-        if (stack == null || WorldHelper.getServerWorld() == null) return true;
+        if (stack == null || WorldHelper.cannotGetServerWorld()) return true;
         NbtCompound nbt = stack.getOrCreateNbt();
         return !nbt.contains(EXTINGUISH_NBT);
     }
@@ -45,6 +44,7 @@ public class BurningCrudeTorchItem extends VerticallyAttachableBlockItem {
             return 0;
         }
         World world = WorldHelper.getServerWorld();
+        assert world != null;
         long diff = stack.getOrCreateNbt().getLong(EXTINGUISH_NBT) - world.getTime();
         return MathHelper.clamp((float) diff / (float) getMaxBurningLength(stack), 0.0F, 1.0F);
     }

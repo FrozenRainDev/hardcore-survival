@@ -31,7 +31,10 @@ import java.util.function.Predicate;
 import static biz.coolpage.hcs.util.CommUtil.applyNullable;
 
 public class WorldHelper {
-    private static ServerWorld currWorld = null;
+    private static ServerWorld serverWorld = null;
+    // Do not call ClientWorld class type directly! In dedicated server, there's no such class! This will disable running!
+    private static World clientWorld = null;
+    private static PlayerEntity clientPlayer = null;
     public static final BooleanProperty FERTILIZER_FREE = BooleanProperty.of("hcs_fertilizer_free");
     public static final Predicate<BlockState> IS_GRAVITY_AFFECTED = state -> state != null && (state.isOf(Blocks.DIRT) || state.isOf(Blocks.DIRT_PATH) || state.isOf(Blocks.CLAY) || state.isOf(Blocks.COARSE_DIRT));
     public static final Predicate<RegistryEntry<Biome>> IS_SALTY_WATER_BIOME = entry -> entry.isIn(BiomeTags.IS_OCEAN) || entry.isIn(BiomeTags.IS_DEEP_OCEAN) || entry.isIn(BiomeTags.IS_BEACH) || TemperatureHelper.getBiomeName(entry).contains("stony_shore");
@@ -58,11 +61,16 @@ public class WorldHelper {
 
     // Do not abuse
     @SuppressWarnings({"GrazieInspection"})
+    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
+    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
+    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
+    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
+    // NOTE: CLIENT SIDE UNAVAILABLE!!!!!!!! ALWAYS == NULL!!!!!
     public static @Nullable ServerWorld getServerWorld() {
-        if (currWorld == null) {
-            Reg.LOGGER.error("WorldHelper::getServerWorld() You should call cannotGetServerWorld first before getServerWorld()");
+        if (serverWorld == null) {
+            Reg.LOGGER.error("WorldHelper::getServerWorld() You're likely to called this from client side. You should call cannotGetServerWorld first before getServerWorld()");
         }
-        return currWorld;
+        return serverWorld;
         // NOTE: Using MinecraftClient.class will crash in server env
         /*
         MinecraftClient client = MinecraftClient.getInstance();
@@ -79,12 +87,27 @@ public class WorldHelper {
     }
 
     public static boolean cannotGetServerWorld() {
-        return currWorld == null;
+        return serverWorld == null;
+    }
+
+    @SuppressWarnings("unused")
+    public static World getClientWorld() {
+        return clientWorld;
+    }
+
+    public static PlayerEntity getClientPlayer() {
+        return clientPlayer;
+    }
+
+    // CLIENT SIDE ONLY
+    public static void updateClientWorldAndMainPlayer(@Nullable World world, @Nullable PlayerEntity player) {
+        clientWorld = world;
+        clientPlayer = player;
     }
 
     public static void trySetServerWorld(@Nullable World world) {
-        if (world instanceof ServerWorld serverWorld) {
-            currWorld = serverWorld;
+        if (world instanceof ServerWorld wld) {
+            serverWorld = wld;
         }
     }
 
@@ -106,7 +129,7 @@ public class WorldHelper {
     }
 
     public static boolean isDeepInCave(World world, BlockPos pos, int maxSkyBrightness, int maxHeight) {
-        if (world == null || pos == null|| cannotGetServerWorld()) return false;
+        if (world == null || pos == null || cannotGetServerWorld()) return false;
         @Nullable ServerWorld serverWorld = getServerWorld();
         if (serverWorld == null || !(serverWorld.getRegistryKey() == World.OVERWORLD)) return false;
         if (!(serverWorld.getChunkManager().getChunkGenerator().getBiomeSource() instanceof MultiNoiseBiomeSource))
@@ -138,8 +161,8 @@ public class WorldHelper {
     }
 
     public static boolean shouldGenerateVillages() {
-        if (currWorld == null) return false;
-        return applyNullable(HcsPersistentState.getServerState(currWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
+        if (serverWorld == null) return false;
+        return applyNullable(HcsPersistentState.getServerState(serverWorld), HcsPersistentState::hasObtainedCopperPickaxe, false);
     }
 
     @Contract(value = "null -> new", pure = true)

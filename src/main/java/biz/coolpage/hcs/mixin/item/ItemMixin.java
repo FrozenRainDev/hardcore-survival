@@ -1,12 +1,14 @@
 package biz.coolpage.hcs.mixin.item;
 
 import biz.coolpage.hcs.Reg;
+import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.entity.FlintProjectileEntity;
 import biz.coolpage.hcs.item.RockItem;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.util.CombustionHelper;
 import biz.coolpage.hcs.util.EntityHelper;
 import biz.coolpage.hcs.util.RotHelper;
+import biz.coolpage.hcs.util.WorldHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -132,7 +134,7 @@ public class ItemMixin {
                 && applyNullable(stack, s -> s.getAttributeModifiers(EquipmentSlot.MAINHAND).isEmpty(), false)) {
             tooltip.add(ScreenTexts.EMPTY);
             tooltip.add(Text.translatable("item.modifiers.mainhand").formatted(Formatting.GRAY));
-            //See end of ItemStackMixin/getTooltip1()V
+            // See end of ItemStackMixin/getTooltip1()V
         }
         if (RotHelper.canRot(item) && world != null) RotHelper.appendInfo(world, stack, tooltip);
         String descriptionKey = item.getTranslationKey() + ".description";

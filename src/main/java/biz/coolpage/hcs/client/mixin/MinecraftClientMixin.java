@@ -4,6 +4,7 @@ import biz.coolpage.hcs.Reg;
 import biz.coolpage.hcs.client.ClientC2S;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
 import biz.coolpage.hcs.util.EntityHelper;
+import biz.coolpage.hcs.util.WorldHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -56,7 +57,7 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
         super(string);
     }
 
-//    todo cannot find method handleBlockBreaking in PCL launcher
+    //    todo cannot find method handleBlockBreaking in PCL launcher
     @ModifyArg(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;handleBlockBreaking(Z)V"), index = 0)
     private boolean handleInputEvents(boolean breaking) {
         return breaking || (((StatAccessor) this.player).getStatusManager().lockDestroying() && this.currentScreen == null && this.mouse.isCursorLocked());
@@ -105,5 +106,10 @@ public abstract class MinecraftClientMixin extends ReentrantThreadExecutor<Runna
                 ci.cancel();
             }
         }
+    }
+
+    @Inject(method = "tick", at = @At("HEAD"))
+    public void tick(CallbackInfo ci) {
+        WorldHelper.updateClientWorldAndMainPlayer(this.world, this.player);
     }
 }

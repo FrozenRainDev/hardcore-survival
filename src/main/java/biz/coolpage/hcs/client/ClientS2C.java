@@ -101,6 +101,7 @@ public class ClientS2C {
                         statusManager.setRealProtection(i2f(bufArr[18]));
                         statusManager.setRecentHurtTicks(bufArr[19]);
                         statusManager.setRecentFeelingDamage(i2f(bufArr[20]));
+                        statusManager.setCanFoodSpoil(i2b(bufArr[21]));
                     }
                 }
             });

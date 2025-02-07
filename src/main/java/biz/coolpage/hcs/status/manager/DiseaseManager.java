@@ -25,9 +25,9 @@ public class DiseaseManager {
         // WARNING: Food with parasite == Food causing poisoning
         // Modify it if new rules needed
         else if (IS_RAW_MEAT.test(item)) {
-            if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.16;
-            else poss = 0.08;
-        } else if (item == Items.ROTTEN_FLESH) return 0.3;
+            if (item == Items.PORKCHOP || item == Reg.ANIMAL_VISCERA) poss = 0.08;
+            else poss = 0.04;
+        } else if (item == Items.ROTTEN_FLESH) return 0.2;
         else if (item == Reg.ROT || item == Reg.BAT_WINGS) poss = 0.1;
         if ((Math.random() < (poss * 3.5) || isFoodPoisonous(item.getFoodComponent())) && entity instanceof ServerPlayerEntity player)
             player.addStatusEffect(new StatusEffectInstance(HcsEffects.FOOD_POISONING, 1200, 0, false, false, true));
@@ -55,7 +55,7 @@ public class DiseaseManager {
 
     public void setParasite(double val) {
         if (Double.isNaN(val)) {
-            Reg.LOGGER.error(this.getClass().getSimpleName() + "/setParasite(): Val is NaN");
+            Reg.LOGGER.error("{}/setParasite(): Val is NaN", this.getClass().getSimpleName());
             return;
         }
         if (val > 3.0) val = 3.0;

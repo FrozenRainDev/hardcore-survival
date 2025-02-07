@@ -10,13 +10,16 @@ import org.jetbrains.annotations.Nullable;
 import static biz.coolpage.hcs.Reg.HCS_DIFFICULTY;
 
 public class HcsDifficulty {
+    // FabricItemGroup.builder(new Identifier("hcs", "main")).icon(() -> new ItemStack(FLINT_HATCHET)).build();
+    public static final String HCS_DIFFICULTY_NAME = "hcsDifficulty";
+
     public enum HcsDifficultyEnum {
         relaxing, standard, challenging
     }
 
     public static Enum<HcsDifficultyEnum> getDifficulty(@Nullable World world) {
         if (!(world instanceof ServerWorld) || world.getGameRules() == null) {
-            Reg.LOGGER.warn(HcsDifficulty.class.getSimpleName() + ": Invalid world or game rules");
+            Reg.LOGGER.warn("{}: Invalid world or game rules", HcsDifficulty.class.getSimpleName());
             return HcsDifficultyEnum.standard;
         }
         return world.getGameRules().get(HCS_DIFFICULTY).get();

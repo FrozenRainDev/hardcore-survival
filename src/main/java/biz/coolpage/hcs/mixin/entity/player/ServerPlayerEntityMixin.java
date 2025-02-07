@@ -1,6 +1,7 @@
 package biz.coolpage.hcs.mixin.entity.player;
 
 import biz.coolpage.hcs.config.HcsDifficulty;
+import biz.coolpage.hcs.config.HcsFoodSpoilage;
 import biz.coolpage.hcs.status.HcsEffects;
 import biz.coolpage.hcs.status.accessor.IDamageSources;
 import biz.coolpage.hcs.status.accessor.StatAccessor;
@@ -76,6 +77,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         if (this.getWorld() instanceof ServerWorld serverWorld) {
             WorldHelper.trySetServerWorld(serverWorld);
             statusManager.setHcsDifficulty(HcsDifficulty.getDifficulty(serverWorld));
+            statusManager.setCanFoodSpoil(HcsFoodSpoilage.canFoodSpoil(serverWorld));
         }
         if (!statusManager.hasShownInitTips()) {
             int enterWorldTimes = statusManager.getEnterCurrWldTimes();
